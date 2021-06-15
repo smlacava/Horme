@@ -1,7 +1,7 @@
 # <span style="color:blue">HORME</span>
 
 ***HORME*** *(Handler for the Observable Rotating Motion of the Encephalos)* is a toolbox which allow to
-show a 3D image of the brain, which is manually inspectable by rotating it.
+show a 3D image of the brain, in order to ease its visualization.
 
 <p align="center">
   <img src="Images\brain.png" width="600" title="3D brain">
@@ -20,6 +20,11 @@ Optionally, this toolbox is also able to show the labels associated to each elec
 <p align="center">
   <img src="Images\labels.png" width="600" title="Labels">
 </p>
+
+As the acronym of its name say, HORME allows to rotate, manually or by script, the brain in order to inspect the
+whished areas.
+
+![Rotating brain](https://github.com/smlacava/Horme/tree/main/Images/rotating_brain.gif)
 
 
 
