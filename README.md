@@ -24,8 +24,9 @@ Optionally, this toolbox is also able to show the labels associated to each elec
 As the acronym of its name say, HORME allows to rotate, manually or by script, the brain in order to inspect the
 whished areas.
 
-![Rotating brain](https://github.com/smlacava/Horme/blob/main/Images/rotating_brain.gif)
-
+<p align="center">
+<img src="Images\rotating_brain.gif" width="600">
+</p>
 
 
 ## The wiki
