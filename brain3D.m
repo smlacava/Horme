@@ -2,10 +2,6 @@
 % This function provides a 3D view of the brain and of the electrodes,
 % either cortical or on the scalp, eventually highlighting some of them
 % with two different highlight colors (red or blue).
-% This function is partially based on Edden M. Gerber (2021). Anatomical 
-% data visualization toolfbox for fMRI/ECoG 
-% (https://github.com/edden-gerber/ecog_fmri_visualization_matlab), GitHub. 
-% Retrieved May 28, 2021.
 %
 % brain3D(chanlocs, highlight, second_highlight, show_labels)
 %
@@ -111,7 +107,9 @@ end
 
 
 %% plot_hemisphere
-% This function plots a 3D hemisphere of the brain.
+% This function plots a 3D hemisphere of the brain (This function is 
+% partially based on Edden M. Gerber, 2021: Anatomical data visualization 
+% toolfbox for fMRI/ECoG).
 % 
 % handle = plot_hemisphere(hemi_mesh)
 %
@@ -128,9 +126,9 @@ function handle = plot_hemisphere(hemi_mesh)
     view_position = [0 0];
     
     color_map = jet(64);
-    color_map = [interp1(1:2:63,color_map(33:64,1),1:63)', ...
-        interp1(1:2:63,color_map(33:64,2),1:63)', ...
-        interp1(1:2:63,color_map(33:64,3),1:63)'];
+    color_map = [interp1(1:2:63,color_map(33:64,1), 1:63)', ...
+        interp1(1:2:63,color_map(33:64,2), 1:63)', ...
+        interp1(1:2:63,color_map(33:64,3), 1:63)'];
     color_map = [brain_color ; color_map];
     
     vertex_color_values = zeros(length(hemi_mesh.vertices), 1);
@@ -149,8 +147,8 @@ function handle = plot_hemisphere(hemi_mesh)
     hold('all');
     view(view_position);
     l = light();
-    camlight(l, 'headlight'); % light source is at the camera position
-    cameratoolbar('Show'); % use this toolbar for 3D navigation
+    camlight(l, 'headlight');
+    cameratoolbar('Show');
     if all(vertex_color_values==0)
         caxis([0 1]);
     end 
@@ -169,7 +167,7 @@ function fix_light(fig_handle, varargin)
     if nargin<1
         fig_handle = gcf;
     end
-    l_handle = findobj(fig_handle,'Type','light');
+    l_handle = findobj(fig_handle, 'Type', 'light');
     if isempty(l_handle)
         l_handle = light;
     end
