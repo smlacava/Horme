@@ -29,5 +29,3 @@ Another functionality is the possibility to link pairs of electrodes.
 
 ## The wiki
 For any doubt, you can consult the toolbox [**wiki**](https://github.com/smlacava/Horme/wiki/Home). 
-
-> The toolbox is still under construction
