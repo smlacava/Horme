@@ -1,9 +1,10 @@
 %% brain3D
 % This function provides a 3D view of the brain and of the electrodes,
 % either cortical or on the scalp, eventually highlighting some of them
-% with two different highlight colors (red or blue).
+% with two different highlight colors (red or blue), allowing to link pairs 
+% of electrodes.
 %
-% brain3D(chanlocs, highlight, second_highlight, show_labels)
+% brain3D(chanlocs, highlight, second_highlight, show_labels, links)
 %
 % Input:
 %    chanlocs is the channels structure, contianing at least the XYZ
@@ -16,8 +17,12 @@
 %        blue (empty by default)
 %    show_labels has to be 1 in order to show the label associated to each
 %        electrode, 0 otherwise (0 by default)
+%    links is the (N x 2) string matrix containing the pairs of names
+%       related to the channels which have to be linked on each row (empty
+%       by default)
 
-function brain3D(chanlocs, highlight, second_highlight, show_labels)
+function brain3D(chanlocs, highlight, second_highlight, show_labels, ...
+    links)
     if nargin < 1
         chanlocs = [];
     end
@@ -27,27 +32,34 @@ function brain3D(chanlocs, highlight, second_highlight, show_labels)
     if nargin < 3 | isempty(second_highlight)
         second_highlight = [];
     end
-    if nargin < 4
+    if nargin < 4 | isempty(show_labels)
         show_labels = 0;
+    end
+    if nargin < 5
+        links = [];
     end
     
     plot_brain();
     dim = 30;  %electrodes size
     hdim = 20; %inner highlight size
     
+    N = length(chanlocs);
+    labels = strings(N, 1);
+    for i = 1:N
+        labels(i) = string(chanlocs(i).labels);
+    end
+    
     if not(isempty(chanlocs))
         if show_labels == 1
-            N = length(chanlocs);
-            labels = strings(N, 1);
-            for i = 1:N
-                labels(i) = string(chanlocs(i).labels);
-            end
             plot_channels(adjust_coordinates(chanlocs), 'k', ...
                 'markersize', dim, 'showlabels', labels, ...
                 'scatterarg', {'filled'});
         else
             plot_channels(adjust_coordinates(chanlocs), 'k', ...
                 'markersize', dim, 'scatterarg', {'filled'});
+        end
+        if not(isempty(links))
+            plot_links(labels, adjust_coordinates(chanlocs), links)
         end
         if not(isempty(highlight))
             plot_channels(adjust_coordinates(highlight), 'k', ...
@@ -239,3 +251,34 @@ function plot_channels(coordinates, varargin)
         end
     end
 end
+
+
+%% plot_links
+% This function is used for showing the links among different channels.
+%
+% plot_links(labels, coordinates, links)
+%
+% Input:
+%   labels is the string array of channel names
+%   coordinates is the (N x 3) matrix containing the xyz coordinates
+%   links is the (N x 2) string matrix containing the pairs of names of
+%       channels which have to be linked
+
+function plot_links(labels, coordinates, links)
+    nChans = length(labels);
+    for i = 1:size(links, 1)
+        idxs = [0 0];
+        for ch = 1:2
+            for lbl = 1:nChans
+                if strcmp(labels{lbl}, links(i, ch))
+                    idxs(ch) = lbl;
+                end
+            end
+        end
+        if idxs(1) > 0 & idxs(2) > 0
+            plot3(coordinates(idxs, 1), coordinates(idxs, 2), ...
+                coordinates(idxs, 3), 'r')
+        end
+    end
+end
+            
