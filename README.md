@@ -24,8 +24,15 @@ Optionally, this toolbox is also able to show the labels associated to each elec
 Another functionality is the possibility to link pairs of electrodes.
 
 <p align="center">
-  <img src="Images\links.png" width="600" title="Labels">
+  <img src="Images\links.png" width="600" title="Links">
+</p>
+
+These links can also be colored in order to represent an intensity, or provide some more meaningful representation.
+
+<p align="center">
+  <img src="Images\intensities.png" width="600" title="Color-Links">
 </p>
 
 ## The wiki
 For any doubt, you can consult the toolbox [**wiki**](https://github.com/smlacava/Horme/wiki/Home). 
+
