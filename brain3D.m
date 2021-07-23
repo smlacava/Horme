@@ -4,7 +4,8 @@
 % with two different highlight colors (red or blue), allowing to link pairs 
 % of electrodes.
 %
-% brain3D(chanlocs, highlight, second_highlight, show_labels, links)
+% brain3D(chanlocs, highlight, second_highlight, show_labels, links, ...
+%         intensities)
 %
 % Input:
 %    chanlocs is the channels structure, contianing at least the XYZ
@@ -20,9 +21,14 @@
 %    links is the (N x 2) string matrix containing the pairs of names
 %       related to the channels which have to be linked on each row (empty
 %       by default)
+%    intensities is an array containing the intensities for each link,
+%       which will be mapped between the blue (lower negative) to the red
+%       (highest positive), passing through the green (black lines if 
+%       empty, empty by default)
 
 function brain3D(chanlocs, highlight, second_highlight, show_labels, ...
-    links)
+    links, intensities)
+
     if nargin < 1
         chanlocs = [];
     end
@@ -37,6 +43,9 @@ function brain3D(chanlocs, highlight, second_highlight, show_labels, ...
     end
     if nargin < 5
         links = [];
+    end
+    if nargin < 6
+        intensities = [];
     end
     
     plot_brain();
@@ -59,7 +68,8 @@ function brain3D(chanlocs, highlight, second_highlight, show_labels, ...
                 'markersize', dim, 'scatterarg', {'filled'});
         end
         if not(isempty(links))
-            plot_links(labels, adjust_coordinates(chanlocs), links)
+            plot_links(labels, adjust_coordinates(chanlocs), links, ...
+                intensities)
         end
         if not(isempty(highlight))
             plot_channels(adjust_coordinates(highlight), 'k', ...
@@ -256,17 +266,27 @@ end
 %% plot_links
 % This function is used for showing the links among different channels.
 %
-% plot_links(labels, coordinates, links)
+% plot_links(labels, coordinates, links, intensities)
 %
 % Input:
 %   labels is the string array of channel names
 %   coordinates is the (N x 3) matrix containing the xyz coordinates
 %   links is the (N x 2) string matrix containing the pairs of names of
 %       channels which have to be linked
+%   intensities is an array containing the intensities for each link,
+%       which will be mapped between the blue (lower negative) to the red
+%       (highest positive), passing through the green (black lines if 
+%       empty)
 
-function plot_links(labels, coordinates, links)
+function plot_links(labels, coordinates, links, intensities)
     nChans = length(labels);
-    for i = 1:size(links, 1)
+    nLinks = size(links, 1);
+    if isempty(intensities)
+        intensities = zeros(nLinks, 3);
+    else
+        intensities = values_mapping(intensities);
+    end  
+    for i = 1:nLinks
         idxs = [0 0];
         for ch = 1:2
             for lbl = 1:nChans
@@ -277,8 +297,64 @@ function plot_links(labels, coordinates, links)
         end
         if idxs(1) > 0 & idxs(2) > 0
             plot3(coordinates(idxs, 1), coordinates(idxs, 2), ...
-                coordinates(idxs, 3), 'r')
+                coordinates(idxs, 3), 'Color', intensities(i, :))
         end
     end
 end
-            
+         
+
+%% values_mapping
+% This function returns the values mapped on the color map, centered the
+% map on the zero value.
+%
+% mapped = values_mapping(values)
+%
+% Input:
+%   values is the array of single values which has to be mapped into the
+%       corresponding RGB values
+%
+% Output:
+%   mapped is the array of RGB values
+
+function mapped = values_mapping(values)
+    N = length(values);
+    mapped = zeros(N, 3);
+    cmp = color_function();
+    range = size(cmp, 1)/2;
+    cmp = [cmp; 0, 0, 0; 0, 0, 0]; %avoid errors in boudaries
+    values = values/max(abs(values));
+    values = values*range+range+1;
+    for i = 1:N
+        int_val = floor(values(i));
+        frac_val = values(i)-int_val;
+        mapped(i, :) = frac_val*cmp(int_val+1, :)+(1-frac_val)*cmp(int_val, :);
+    end
+end
+
+%% color_function
+% This function provides the color map.
+%
+% cmp = color_function()
+%
+% Output:
+%   cmp is the (64 x 3) array representing the color map as rgb values
+
+function cmp = color_function()
+    cmp = [0, 0, 0.5625; 0, 0, 0.625; 0, 0, 0.6875; 0, 0, 0.75; ...
+        0, 0, 0.8125; 0, 0, 0.875; 0, 0, 0.9375; 0, 0, 1; 0, 0.0625, 1; ...
+        0, 0.125, 1; 0, 0.1875, 1; 0, 0.25, 1; 0, 0.3125, 1; ...
+        0, 0.375, 1; 0, 0.4375, 1; 0, 0.5, 1; 0, 0.5625, 1; ...
+        0, 0.625, 1; 0, 0.6875, 1; 0, 0.75, 1; 0, 0.8125, 1; ...
+        0, 0.875, 1; 0, 0.9375, 1; 0, 1, 1; 0.0625, 1, 0.9375; ...
+        0.125, 1, 0.875; 0.1875, 1, 0.8125; 0.25, 1, 0.75; ...
+        0.3125, 1, 0.6875; 0.375, 1, 0.625; 0.4375, 1, 0.5625; ...
+        0.5, 1, 0.5; 0.5625, 1, 0.4375; 0.625, 1, 0.375; ...
+        0.6875, 1, 0.3125; 0.75, 1, 0.25; 0.8125, 1, 0.1875; ...
+        0.875, 1, 0.125; 0.9375, 1, 0.0625; 1, 1, 0; 1, 0.9375, 0; ...
+        1, 0.875, 0; 1, 0.8125, 0; 1, 0.75, 0; 1, 0.6875, 0; ...
+        1, 0.625, 0; 1, 0.5625, 0; 1, 0.5, 0; 1, 0.4375, 0; ...
+        1, 0.375, 0; 1,0.3125, 0; 1, 0.25, 0; 1, 0.1875, 0; ...
+        1, 0.125, 0; 1, 0.0625, 0; 1, 0, 0; 0.9375, 0, 0; 0.875, 0, 0; ...
+        0.8125, 0, 0; 0.75, 0, 0; 0.6875, 0, 0; 0.625, 0, 0; ...
+        0.5625, 0, 0; 0.5, 0, 0];
+end
