@@ -108,7 +108,7 @@ end
 %       coordinates and N electrodes
 
 function coordinates = adjust_coordinates(chanlocs)
-    coordinates = [[chanlocs(:).X]', [chanlocs(:).Y]', [chanlocs(:).Z]'-1];
+    coordinates = [[chanlocs(:).Y]', [chanlocs(:).X]', [chanlocs(:).Z]'-1];
     coordinates(:, 2) = coordinates(:, 2)*1.2-20;
 end
 
@@ -321,7 +321,7 @@ function mapped = values_mapping(values)
     mapped = zeros(N, 3);
     cmp = color_function();
     range = size(cmp, 1)/2;
-    cmp = [cmp; 0, 0, 0; 0, 0, 0]; %avoid errors in boudaries
+    cmp = [cmp(1, :); cmp; cmp(end, :)]; %avoid errors in boudaries
     values = values/max(abs(values));
     values = values*range+range+1;
     for i = 1:N
