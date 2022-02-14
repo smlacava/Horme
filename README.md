@@ -1,6 +1,6 @@
 # <span style="color:blue">HORME</span>
 
-***HORME*** *(Handler for the Observable Rotating Motion of the Encephalos)* is a toolbox which allow to
+***HORME*** *(Handler for the Observable Rotating Motion of the Encephalos)* is a toolbox which allows to
 show a 3D image of the brain, which is manually inspectable by rotating it.
 
 <p align="center">
